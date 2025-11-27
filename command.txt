@@ -1,0 +1,64 @@
+sudo ip netns exec attacker-ns wrk -t1 -c4 -d30s http://192.168.100.1/
+sudo ip netns exec attacker-ns ab -n 100 -c 4 http://192.168.100.1/
+
+sudo systemctl stop nginx
+sudo systemctl restart nginx
+
+sudo -E ip netns exec attacker-ns python3 http_flood.py 
+
+# This will show all packets going to or coming from 192.168.100.1.
+sudo ip netns exec attacker-ns tcpdump -i any host 192.168.100.1 -n
+
+# This saves the captured packets to a file that you can analyze later with Wireshark.
+
+
+sudo ip netns exec attacker-ns tcpreplay -i veth-att --stats=1000 traffic.pcap
+sudo ip netns exec attacker-ns tcpreplay -i veth-att traffic.pcap
+sudo ip netns exec attacker-ns tcpreplay --pps=100 -i veth-att traffic.pcap
+sudo ip netns exec attacker-ns tcpreplay --loop=10 -i veth-att traffic.pcap
+
+python3 packet_gen.py -n 100000 -r 0.3 -o traffic.pcap
+
+
+    sudo ip netns exec attacker-ns ping -c 50 192.168.100.1
+📌 Một số option hay đi kèm:
+
+-i 0.2 → chỉnh khoảng cách giữa 2 gói (mặc định 1 giây).
+
+-s 1400 → chỉnh kích thước payload gói ICMP.
+
+-q → chế độ “quiet”, chỉ in summary sau khi ping xong.
+
+sudo -E ip netns exec attacker-ns python3 benchmark.py -t 192.168.100.1 -p 80 -m syn_only
+sudo ip netns exec attacker-ns tcpdump -i veth-att -w capture.pcap
+
+sudo ip netns exec victim-ns tcpdump -i veth-vic src host 192.168.200.2 -w capture_victim.pcap
+
+sudo ip netns exec victim-ns ./src/h2load --h1 -c 5 -t 1 -D 20s http://192.168.100.1/           
+sudo ip netns exec attacker-ns ./src/h2load --h1 -c 100 -t 1 -D 30s http://192.168.100.1/   
+sudo ip netns exec attacker-ns taskset -c 0 h2load --h1 -c 1 -t 1 -D 45s http://192.168.100.1/
+
+
+sudo truncate -s 0 /var/log/nginx/error.log
+sudo truncate -s 0 /var/log/nginx/access.log
+
+
+sudo apt install python3-venv -y
+
+# tạo venv riêng
+python3 -m venv venv
+
+# kích hoạt venv
+source venv/bin/activate
+
+# cài lib trong venv
+pip install pandas matplotlib
+
+# chạy script
+python3 your_script.py
+
+sudo taskset -c 3 timeout 30s ip netns exec attacker-ns hping3 -S -p 80 --flood 192.168.100.1
+
+
+pidstat -p $(pgrep -o -P $(pgrep -o nginx)) 1  > cpu_usage.log
+ln -s /var/log/nginx/access.log ~/Manh/PacketFilter/monitor/access.log

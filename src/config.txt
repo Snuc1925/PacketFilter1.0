@@ -1,0 +1,7 @@
+interface=ens37
+ip_blacklist=192.168.245.24,192.168.31.37,192.168.78.12,192.168.78.20
+
+# IP rate limits - comma separated list of IP:PPS pairs
+# Format: IP:packets_per_second
+# Example: 192.168.2.5:1000 limits 192.168.2.5 to 1000 packets per second
+# ip_rate_limits=192.168.100.4:100
