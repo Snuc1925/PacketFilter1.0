@@ -15,3 +15,6 @@ build/
 # Temporary files
 *.tmp
 *~
+
+# Dependencies (cloned externally)
+spdlog/
