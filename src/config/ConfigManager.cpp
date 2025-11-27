@@ -2,15 +2,17 @@
 #include "Constants.h"
 #include "config/ConfigType.h"
 #include "config/type/Blacklist.h"
+#include "config/type/Whitelist.h"
+#include "config/type/RateLimit.h"
 #include <fstream>
 #include <iostream>
 #include <stdexcept>
 
-
-// Đây là nơi duy nhất biết về FileEventSource
+// This is the only place that knows about FileEventSource
 #include "config/FileEventSource.h"
 
 ConfigManager::~ConfigManager() {
+    stopEventListener();
     std::cout << "Destroying ConfigManager...\n";
 }
 
@@ -35,15 +37,31 @@ std::string ConfigManager::getInterface() {
 }
 
 bool ConfigManager::loadAllConfigs() {
+    // Load Blacklist config
     auto blacklist = std::make_unique<Blacklist>();
     if (!blacklist->loadConfig()) {
-        std::cout << "Blacklist config load unsuccessful" << std::endl;
-        return false;
+        std::cerr << "Warning: Blacklist config load unsuccessful" << std::endl;
+        // Continue loading other configs
     }
-
     configTypes.push_back(std::move(blacklist));
 
-    std::cout << "Load configs sucessfully...\n";
+    // Load Whitelist config
+    auto whitelist = std::make_unique<Whitelist>();
+    if (!whitelist->loadConfig()) {
+        std::cerr << "Warning: Whitelist config load unsuccessful" << std::endl;
+        // Continue loading other configs
+    }
+    configTypes.push_back(std::move(whitelist));
+
+    // Load RateLimit config
+    auto ratelimit = std::make_unique<RateLimit>();
+    if (!ratelimit->loadConfig()) {
+        std::cerr << "Warning: RateLimit config load unsuccessful" << std::endl;
+        // Continue loading other configs
+    }
+    configTypes.push_back(std::move(ratelimit));
+
+    std::cout << "Load configs successfully...\n";
     return true;
 }
 
@@ -53,32 +71,30 @@ void ConfigManager::startEventListener() {
         return;
     }
     
-    // --- ĐÂY LÀ PHẦN LINH HOẠT ---
-    // 1. Quyết định dùng source nào.
-    // Trong tương lai, bạn có thể thay dòng này:
-    // m_eventSource = std::make_unique<ConsulEventSource>(consul_address);
+    // Create the event source (can be swapped for ConsulEventSource, etc.)
     m_eventSource = std::make_unique<FileEventSource>(
         Constants::DEFAULT_CONFIG_EVENT_LISTENER()
     );
 
-    // 2. Đặt callback: Dùng lambda để "gói" hàm processEventMessage
-    //    với con trỏ 'this' của ConfigManager.
+    // Set callback with exception handling for thread safety
     m_eventSource->setCallback(
         [this](const std::string& msg) {
-            this->processEventMessage(msg);
+            try {
+                this->processEventMessage(msg);
+            } catch (const std::exception& e) {
+                std::cerr << "Exception in processEventMessage: " << e.what() << std::endl;
+            } catch (...) {
+                std::cerr << "Unknown exception in processEventMessage" << std::endl;
+            }
         }
     );
     
-    // 3. Bắt đầu và kiểm tra lỗi (NHƯ BẠN YÊU CẦU)
+    // Start and check for errors
     if (!m_eventSource->start()) {
-        // Nếu start() trả về false (ví dụ: file không tồn tại)
         std::cerr << "CRITICAL WARNING: Config event listener failed to start. "
                   << "Dynamic config updates will be DISABLED." << std::endl;
-        
-        // Hủy đối tượng đã thất bại
         m_eventSource.reset(); 
-        
-        // Luồng chính vẫn tiếp tục chạy
+        // Main thread continues running
     } else {
         std::cout << "Config event listener started successfully." << std::endl;
     }
@@ -92,7 +108,7 @@ void ConfigManager::stopEventListener() {
 }
 
 /**
- * @brief Hàm xử lý tin nhắn (chạy trên luồng của EventSource)
+ * @brief Process event message (runs on EventSource thread)
  */
 void ConfigManager::processEventMessage(const std::string& line) {
     std::cout << "ConfigManager processing message: " << line << std::endl;
@@ -106,19 +122,19 @@ void ConfigManager::processEventMessage(const std::string& line) {
     std::string configTypeStr = line.substr(0, delimiterPos);
     std::string message = line.substr(delimiterPos + 1);
 
-    // Trim khoảng trắng (C++ 20 có hàm starts_with/ends_with, C++ 11 làm thủ công)
+    // Trim whitespace
     configTypeStr.erase(0, configTypeStr.find_first_not_of(" \t\n\r"));
     configTypeStr.erase(configTypeStr.find_last_not_of(" \t\n\r") + 1);
     message.erase(0, message.find_first_not_of(" \t\n\r"));
     message.erase(message.find_last_not_of(" \t\n\r") + 1);
 
-    // Tìm ConfigType tương ứng
+    // Find matching ConfigType
     for (const auto& config : configTypes) {
         if (config->getTypeName() == configTypeStr) {
             if (!config->updateConfig(message)) {
                 std::cerr << "Failed to update config for " << configTypeStr << std::endl;
             }
-            return; // Đã tìm thấy và xử lý
+            return;
         }
     }
 

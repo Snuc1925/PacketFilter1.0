@@ -218,30 +218,6 @@ MapFdManager.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/packetfilter.dir/build.make CMakeFiles/packetfilter.dir/MapFdManager.cpp.s
 .PHONY : MapFdManager.cpp.s
 
-config/ConfigEventListener.o: config/ConfigEventListener.cpp.o
-.PHONY : config/ConfigEventListener.o
-
-# target to build an object file
-config/ConfigEventListener.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/packetfilter.dir/build.make CMakeFiles/packetfilter.dir/config/ConfigEventListener.cpp.o
-.PHONY : config/ConfigEventListener.cpp.o
-
-config/ConfigEventListener.i: config/ConfigEventListener.cpp.i
-.PHONY : config/ConfigEventListener.i
-
-# target to preprocess a source file
-config/ConfigEventListener.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/packetfilter.dir/build.make CMakeFiles/packetfilter.dir/config/ConfigEventListener.cpp.i
-.PHONY : config/ConfigEventListener.cpp.i
-
-config/ConfigEventListener.s: config/ConfigEventListener.cpp.s
-.PHONY : config/ConfigEventListener.s
-
-# target to generate assembly for a file
-config/ConfigEventListener.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/packetfilter.dir/build.make CMakeFiles/packetfilter.dir/config/ConfigEventListener.cpp.s
-.PHONY : config/ConfigEventListener.cpp.s
-
 config/ConfigManager.o: config/ConfigManager.cpp.o
 .PHONY : config/ConfigManager.o
 
@@ -314,6 +290,54 @@ config/type/Blacklist.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/packetfilter.dir/build.make CMakeFiles/packetfilter.dir/config/type/Blacklist.cpp.s
 .PHONY : config/type/Blacklist.cpp.s
 
+config/type/RateLimit.o: config/type/RateLimit.cpp.o
+.PHONY : config/type/RateLimit.o
+
+# target to build an object file
+config/type/RateLimit.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/packetfilter.dir/build.make CMakeFiles/packetfilter.dir/config/type/RateLimit.cpp.o
+.PHONY : config/type/RateLimit.cpp.o
+
+config/type/RateLimit.i: config/type/RateLimit.cpp.i
+.PHONY : config/type/RateLimit.i
+
+# target to preprocess a source file
+config/type/RateLimit.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/packetfilter.dir/build.make CMakeFiles/packetfilter.dir/config/type/RateLimit.cpp.i
+.PHONY : config/type/RateLimit.cpp.i
+
+config/type/RateLimit.s: config/type/RateLimit.cpp.s
+.PHONY : config/type/RateLimit.s
+
+# target to generate assembly for a file
+config/type/RateLimit.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/packetfilter.dir/build.make CMakeFiles/packetfilter.dir/config/type/RateLimit.cpp.s
+.PHONY : config/type/RateLimit.cpp.s
+
+config/type/Whitelist.o: config/type/Whitelist.cpp.o
+.PHONY : config/type/Whitelist.o
+
+# target to build an object file
+config/type/Whitelist.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/packetfilter.dir/build.make CMakeFiles/packetfilter.dir/config/type/Whitelist.cpp.o
+.PHONY : config/type/Whitelist.cpp.o
+
+config/type/Whitelist.i: config/type/Whitelist.cpp.i
+.PHONY : config/type/Whitelist.i
+
+# target to preprocess a source file
+config/type/Whitelist.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/packetfilter.dir/build.make CMakeFiles/packetfilter.dir/config/type/Whitelist.cpp.i
+.PHONY : config/type/Whitelist.cpp.i
+
+config/type/Whitelist.s: config/type/Whitelist.cpp.s
+.PHONY : config/type/Whitelist.s
+
+# target to generate assembly for a file
+config/type/Whitelist.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/packetfilter.dir/build.make CMakeFiles/packetfilter.dir/config/type/Whitelist.cpp.s
+.PHONY : config/type/Whitelist.cpp.s
+
 logger/AccessLogWriter.o: logger/AccessLogWriter.cpp.o
 .PHONY : logger/AccessLogWriter.o
 
@@ -379,9 +403,6 @@ help:
 	@echo "... MapFdManager.o"
 	@echo "... MapFdManager.i"
 	@echo "... MapFdManager.s"
-	@echo "... config/ConfigEventListener.o"
-	@echo "... config/ConfigEventListener.i"
-	@echo "... config/ConfigEventListener.s"
 	@echo "... config/ConfigManager.o"
 	@echo "... config/ConfigManager.i"
 	@echo "... config/ConfigManager.s"
@@ -391,6 +412,12 @@ help:
 	@echo "... config/type/Blacklist.o"
 	@echo "... config/type/Blacklist.i"
 	@echo "... config/type/Blacklist.s"
+	@echo "... config/type/RateLimit.o"
+	@echo "... config/type/RateLimit.i"
+	@echo "... config/type/RateLimit.s"
+	@echo "... config/type/Whitelist.o"
+	@echo "... config/type/Whitelist.i"
+	@echo "... config/type/Whitelist.s"
 	@echo "... logger/AccessLogWriter.o"
 	@echo "... logger/AccessLogWriter.i"
 	@echo "... logger/AccessLogWriter.s"
