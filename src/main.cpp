@@ -42,7 +42,7 @@ std::unique_ptr<packetfilter_bpf, void(*)(packetfilter_bpf*)> load_ebpf_program(
     return skel;
 }
 
-// Attach vào interface
+// Attach to interface
 std::unique_ptr<bpf_link, void(*)(bpf_link*)> attach_ebpf_interface(packetfilter_bpf* skel, const std::string& interface) {
     std::cout << "Attaching eBPF to interface: " << interface << std::endl;
 
@@ -72,69 +72,77 @@ std::unique_ptr<bpf_link, void(*)(bpf_link*)> attach_ebpf_interface(packetfilter
 }
 
 int main() {
-    std::signal(SIGINT, signal_handler);    
-    ConfigManager configManager;
-    std::string interface;
+    std::signal(SIGINT, signal_handler);
+    std::signal(SIGTERM, signal_handler);
 
     try {
-        interface = configManager.getInterface();
-        std::cout << "Interface: " << interface << "\n";
+        ConfigManager configManager;
+        std::string interface;
+
+        try {
+            interface = configManager.getInterface();
+            std::cout << "Interface: " << interface << "\n";
+        } catch (const std::exception& e) {
+            std::cerr << "Error getting interface: " << e.what() << "\n";
+            return 1;
+        }
+
+        auto skel = load_ebpf_program();
+        if (!skel) return 1;
+
+        auto link = attach_ebpf_interface(skel.get(), interface);
+        if (!link) return 1;
+
+        MapFdManager::initialize(std::move(skel));
+
+        // Load all configs (blacklist, whitelist, ratelimit)
+        configManager.loadAllConfigs();
+        
+        // Start config event listener (handles failures gracefully)
+        configManager.startEventListener();
+
+        std::cout << "Program running... Press Ctrl+C to exit.\n";
+
+        // Initialize spdlog thread pool for async logging
+        spdlog::init_thread_pool(8192, 1);
+
+        // Create and start log writer
+        auto accessWriter = std::make_shared<AccessLogWriter>();
+        
+        try {
+            accessWriter->startLogListener();
+        } catch (const std::exception& e) {
+            std::cerr << "Warning: Failed to start access log listener: " << e.what() << std::endl;
+            // Continue running - logging failure shouldn't stop the filter
+        }
+
+        // Main loop
+        while (running) {
+            sleep(1);
+        }
+
+        // Clean shutdown
+        std::cout << "Shutting down..." << std::endl;
+        
+        // Stop log listener first
+        if (accessWriter) {
+            accessWriter->stopLogListener();
+        }
+        
+        // Stop config event listener
+        configManager.stopEventListener();
+
+        spdlog::shutdown();
+
+        std::cout << "Exiting program...\n";
+        
     } catch (const std::exception& e) {
-        std::cerr << "Error: " << e.what() << "\n";
+        std::cerr << "Fatal error: " << e.what() << std::endl;
+        return 1;
+    } catch (...) {
+        std::cerr << "Unknown fatal error" << std::endl;
         return 1;
     }
 
-    auto skel = load_ebpf_program();
-    if (!skel) return 1;
-
-    auto link = attach_ebpf_interface(skel.get(), interface);
-    if (!link) return 1;
-
-    // auto mapFdManager = std::make_shared<MapFdManager>(std::move(skel));
-    MapFdManager::initialize(std::move(skel));
-
-    configManager.loadAllConfigs();
-    configManager.startEventListener();
-
-    std::cout << "Program running... Press Ctrl+C to exit.\n";
-
-
-    // ------------------------------
-    // TẠO CÁC LOG WRITER
-    // ------------------------------
-
-    // Ví dụ: Access log writer
-    auto accessWriter = std::make_shared<AccessLogWriter>();
-
-    // Nếu bạn thêm nhiều log:
-    // auto dropWriter = std::make_shared<DropLogWriter>();
-    // auto alertWriter = std::make_shared<AlertLogWriter>();
-    // auto perfWriter = std::make_shared<PerformanceLogWriter>();
-
-    // ------------------------------
-    // START LISTENER CHO TỪNG LOG WRITER
-    // Điều này tạo thread riêng để đọc ring-buffer
-    // ------------------------------
-
-// --- BẮT BUỘC PHẢI CÓ DÒNG NÀY ĐẦU TIÊN ---
-    // 8192: Kích thước hàng đợi (Queue size). Nếu log quá nhanh đầy hàng đợi này thì log cũ có thể bị drop.
-    // 1: Số lượng thread nền để ghi log (thường là 1 là đủ).
-    spdlog::init_thread_pool(8192, 1); 
-    // ------------------------------------------
-    
-
-    accessWriter->startLogListener();
-    // dropWriter->startLogListener();
-    // alertWriter->startLogListener();
-
-    // ------------------------------    
-
-    while (running) {
-        sleep(1);
-    }
-
-    spdlog::shutdown();
-
-    std::cout << "Exiting program...\n";
     return 0;
 }

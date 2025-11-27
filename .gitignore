@@ -1,0 +1,20 @@
+# Build directory
+build/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# Compiled objects
+*.o
+*.a
+*.so
+
+# Temporary files
+*.tmp
+*~
+
+# Dependencies (cloned externally)
+spdlog/

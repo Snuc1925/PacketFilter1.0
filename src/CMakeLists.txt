@@ -1,20 +1,18 @@
 # SPDX-License-Identifier: GPL-2.0 OR BSD-3-Clause
 
 cmake_minimum_required(VERSION 3.16)
-project(PacketFilter C CXX)  # Added CXX since prometheus-cpp is C++
+project(PacketFilter C CXX)
 
 # Set C++ standard
 set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 
-# --- Các bước thiết lập giống hệt libbpf-bootstrap ---
-
-# Cho cmake biết nơi tìm module BpfObject
+# CMake module path for BpfObject
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/../tools/cmake)
 
 include(ExternalProject)
 
-# Build libbpf đi kèm
+# Build libbpf
 ExternalProject_Add(libbpf
   PREFIX libbpf
   SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/../libbpf/src
@@ -32,7 +30,7 @@ ExternalProject_Add(libbpf
   STEP_TARGETS build
 )
 
-# Build bpftool đi kèm
+# Build bpftool
 ExternalProject_Add(bpftool
   PREFIX bpftool
   SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/../bpftool/src
@@ -46,40 +44,37 @@ ExternalProject_Add(bpftool
 
 add_subdirectory(${CMAKE_CURRENT_SOURCE_DIR}/../spdlog spdlog_build)
 
-# Xác định kiến trúc CPU
+# Detect CPU architecture
 if(${CMAKE_SYSTEM_PROCESSOR} MATCHES "x86_64")
   set(ARCH "x86")
 elseif(${CMAKE_SYSTEM_PROCESSOR} MATCHES "aarch64")
   set(ARCH "arm64")
-# Thêm các kiến trúc khác nếu cần
 endif()
 
-# Thiết lập các biến đầu vào cho BpfObject
+# Setup BpfObject variables
 set(BPFOBJECT_BPFTOOL_EXE ${CMAKE_CURRENT_BINARY_DIR}/bpftool/bootstrap/bpftool)
 set(BPFOBJECT_VMLINUX_H ${CMAKE_CURRENT_SOURCE_DIR}/../vmlinux.h/include/${ARCH}/vmlinux.h)
 set(LIBBPF_INCLUDE_DIRS ${CMAKE_CURRENT_BINARY_DIR}/libbpf)
 set(LIBBPF_LIBRARIES ${CMAKE_CURRENT_BINARY_DIR}/libbpf/libbpf.a)
 find_package(BpfObject REQUIRED)
 
-# --- Phần tùy chỉnh cho dự án PacketFilter ---
-
-# 1. Tạo skeleton từ file .bpf.c
+# Create skeleton from .bpf.c file
 bpf_object(packetfilter packetfilter.bpf.c)
-# Đảm bảo skeleton được build sau khi libbpf và bpftool được build
 add_dependencies(packetfilter_skel libbpf-build bpftool-build)
 
-# 2. Tạo file thực thi từ file .cpp
+# Create executable from .cpp files
 add_executable(packetfilter 
   main.cpp
   config/ConfigManager.cpp
   config/type/Blacklist.cpp
-  config/ConfigEventListener.cpp 
+  config/type/Whitelist.cpp
+  config/type/RateLimit.cpp
   config/FileEventSource.cpp 
   logger/AccessLogWriter.cpp 
   MapFdManager.cpp
 )
 
-# 3. Liên kết file thực thi với skeleton và các thư viện cần thiết
+# Link executable with skeleton and required libraries
 target_link_libraries(packetfilter PRIVATE
   packetfilter_skel
   spdlog::spdlog

@@ -4,20 +4,24 @@
 #include <string>
 #include <memory>
 #include <vector>
+#include <functional>
 #include "MapFdManager.h"
-#include "ConfigType.h"  
-// #include "ConfigEventListener.h"
+#include "ConfigType.h"
+#include "config/FileEventSource.h"
 
 class ConfigManager {
 public:
     ~ConfigManager(); 
     std::string getInterface();
     bool loadAllConfigs();
-    // void addConfig(std::unique_ptr<ConfigType> config);
-    // void registerConfigListener(std::unique_ptr<ConfigEventListener> configListener);
+    void startEventListener();
+    void stopEventListener();
+
 private:
+    void processEventMessage(const std::string& line);
+    
     std::vector<std::unique_ptr<ConfigType>> configTypes;
-    // std::unique_ptr<ConfigEventListener> configEventListener;    
+    std::unique_ptr<EventSource> m_eventSource;
 };
 
 #endif

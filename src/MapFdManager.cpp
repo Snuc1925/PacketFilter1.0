@@ -1,8 +1,8 @@
 #include "MapFdManager.h"
 #include <iostream>
-#include <stdexcept> // Để dùng std::runtime_error
+#include <stdexcept>
 
-// Khởi tạo con trỏ tĩnh
+// Initialize static pointer
 std::unique_ptr<MapFdManager> MapFdManager::instance = nullptr;
 
 MapFdManager::MapFdManager(std::unique_ptr<packetfilter_bpf, void(*)(packetfilter_bpf*)> skel_)
@@ -17,6 +17,15 @@ MapFdManager::MapFdManager(std::unique_ptr<packetfilter_bpf, void(*)(packetfilte
         std::cout << "Load blacklist_subnets_map successfully...\n";
     }
 
+    // Load whitelist_subnets_map
+    int fd_whitelist = bpf_map__fd(skel->maps.whitelist_subnets_map);
+    if (fd_whitelist < 0)
+        std::cerr << "Warning: Failed to get FD for whitelist_subnets_map\n";
+    else {
+        map_fd_table["whitelist_subnets_map"] = fd_whitelist;
+        std::cout << "Load whitelist_subnets_map successfully...\n";
+    }
+
     // Load config_state_map
     int fd_config = bpf_map__fd(skel->maps.config_state_map);
     if (fd_config < 0)
@@ -24,6 +33,15 @@ MapFdManager::MapFdManager(std::unique_ptr<packetfilter_bpf, void(*)(packetfilte
     else {
         map_fd_table["config_state_map"] = fd_config;
         std::cout << "Load config_state_map successfully...\n";
+    }
+
+    // Load ip_rate_limits_map
+    int fd_rate_limits = bpf_map__fd(skel->maps.ip_rate_limits_map);
+    if (fd_rate_limits < 0)
+        std::cerr << "Warning: Failed to get FD for ip_rate_limits_map\n";
+    else {
+        map_fd_table["ip_rate_limits_map"] = fd_rate_limits;
+        std::cout << "Load ip_rate_limits_map successfully...\n";
     }
 
     // Load packet_ringbuf
