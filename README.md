@@ -1,1 +1,0 @@
-- Đánh giá hệ thống: https://docs.google.com/document/d/1vlKHdhe0Dg6jaMHul0j2CBLZbKaT8BIlonMA2V2Sjxs/edit?usp=sharing
