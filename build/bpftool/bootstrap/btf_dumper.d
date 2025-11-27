@@ -1,0 +1,21 @@
+/home/runner/work/PacketFilter1.0/PacketFilter1.0/build/bpftool/bootstrap/btf_dumper.o: \
+ btf_dumper.c \
+ /home/runner/work/PacketFilter1.0/PacketFilter1.0/bpftool/include/linux/bitops.h \
+ /home/runner/work/PacketFilter1.0/PacketFilter1.0/bpftool/include/uapi/linux/btf.h \
+ /home/runner/work/PacketFilter1.0/PacketFilter1.0/bpftool/include/linux/err.h \
+ /home/runner/work/PacketFilter1.0/PacketFilter1.0/build/bpftool/bootstrap/libbpf/include/bpf/btf.h \
+ /home/runner/work/PacketFilter1.0/PacketFilter1.0/build/bpftool/bootstrap/libbpf/include/bpf/libbpf_common.h \
+ /home/runner/work/PacketFilter1.0/PacketFilter1.0/build/bpftool/bootstrap/libbpf/include/bpf/libbpf_version.h \
+ /home/runner/work/PacketFilter1.0/PacketFilter1.0/build/bpftool/bootstrap/libbpf/include/bpf/bpf.h \
+ /home/runner/work/PacketFilter1.0/PacketFilter1.0/bpftool/include/uapi/linux/bpf.h \
+ /home/runner/work/PacketFilter1.0/PacketFilter1.0/bpftool/include/uapi/linux/bpf_common.h \
+ /home/runner/work/PacketFilter1.0/PacketFilter1.0/build/bpftool/bootstrap/libbpf/include/bpf/libbpf_legacy.h \
+ json_writer.h \
+ /home/runner/work/PacketFilter1.0/PacketFilter1.0/bpftool/include/linux/compiler.h \
+ /home/runner/work/PacketFilter1.0/PacketFilter1.0/bpftool/include/linux/compiler_types.h \
+ /home/runner/work/PacketFilter1.0/PacketFilter1.0/bpftool/include/linux/compiler-gcc.h \
+ main.h \
+ /home/runner/work/PacketFilter1.0/PacketFilter1.0/bpftool/include/linux/kernel.h \
+ /home/runner/work/PacketFilter1.0/PacketFilter1.0/bpftool/include/linux/build_bug.h \
+ /home/runner/work/PacketFilter1.0/PacketFilter1.0/build/bpftool/bootstrap/libbpf/include/bpf/hashmap.h \
+ /home/runner/work/PacketFilter1.0/PacketFilter1.0/build/bpftool/bootstrap/libbpf/include/bpf/libbpf.h

@@ -1,0 +1,43 @@
+{
+	"sources" : 
+	[
+		{
+			"file" : "/home/runner/work/PacketFilter1.0/PacketFilter1.0/build/CMakeFiles/libbpf"
+		},
+		{
+			"file" : "/home/runner/work/PacketFilter1.0/PacketFilter1.0/build/CMakeFiles/libbpf.rule"
+		},
+		{
+			"file" : "/home/runner/work/PacketFilter1.0/PacketFilter1.0/build/CMakeFiles/libbpf-complete.rule"
+		},
+		{
+			"file" : "/home/runner/work/PacketFilter1.0/PacketFilter1.0/build/libbpf/src/libbpf-stamp/libbpf-build.rule"
+		},
+		{
+			"file" : "/home/runner/work/PacketFilter1.0/PacketFilter1.0/build/libbpf/src/libbpf-stamp/libbpf-configure.rule"
+		},
+		{
+			"file" : "/home/runner/work/PacketFilter1.0/PacketFilter1.0/build/libbpf/src/libbpf-stamp/libbpf-download.rule"
+		},
+		{
+			"file" : "/home/runner/work/PacketFilter1.0/PacketFilter1.0/build/libbpf/src/libbpf-stamp/libbpf-install.rule"
+		},
+		{
+			"file" : "/home/runner/work/PacketFilter1.0/PacketFilter1.0/build/libbpf/src/libbpf-stamp/libbpf-mkdir.rule"
+		},
+		{
+			"file" : "/home/runner/work/PacketFilter1.0/PacketFilter1.0/build/libbpf/src/libbpf-stamp/libbpf-patch.rule"
+		},
+		{
+			"file" : "/home/runner/work/PacketFilter1.0/PacketFilter1.0/build/libbpf/src/libbpf-stamp/libbpf-update.rule"
+		}
+	],
+	"target" : 
+	{
+		"labels" : 
+		[
+			"libbpf"
+		],
+		"name" : "libbpf"
+	}
+}

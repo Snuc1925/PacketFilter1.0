@@ -4,6 +4,6 @@
 
 method=source_dir
 command=
-source_dir=/home/maimanh/PacketFilter1.0/src/../bpftool/src
+source_dir=/home/runner/work/PacketFilter1.0/PacketFilter1.0/src/../bpftool/src
 work_dir=
 
