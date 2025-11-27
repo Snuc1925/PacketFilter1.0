@@ -140,6 +140,12 @@ bool RateLimit::updateConfig(const std::string& message) {
 }
 
 bool RateLimit::add_rate_limit(uint32_t ip, uint32_t packets_per_second) {
+    // Guard against division by zero
+    if (packets_per_second == 0) {
+        std::cerr << "Error: packets_per_second cannot be 0" << std::endl;
+        return false;
+    }
+    
     IPRateLimitConfig config;
     config.packets_per_second = packets_per_second;
     // Calculate interval in nanoseconds: 1 second = 1,000,000,000 ns
@@ -167,7 +173,7 @@ bool RateLimit::remove_rate_limit(uint32_t ip) {
 }
 
 bool RateLimit::disable_ratelimit() {
-    uint32_t key = 1; // Key 1 is for ratelimit
+    uint32_t key = ConfigKey::RATELIMIT;
     uint8_t value = 0; // 0 = disabled
     if (bpf_map_update_elem(map_fd_config_state, &key, &value, BPF_ANY) != 0) {
         std::cerr << "Failed to disable ratelimit: " << strerror(errno) << std::endl;
@@ -178,7 +184,7 @@ bool RateLimit::disable_ratelimit() {
 }
 
 bool RateLimit::enable_ratelimit() {
-    uint32_t key = 1; // Key 1 is for ratelimit
+    uint32_t key = ConfigKey::RATELIMIT;
     uint8_t value = 1; // 1 = enabled
     if (bpf_map_update_elem(map_fd_config_state, &key, &value, BPF_ANY) != 0) {
         std::cerr << "Failed to enable ratelimit: " << strerror(errno) << std::endl;

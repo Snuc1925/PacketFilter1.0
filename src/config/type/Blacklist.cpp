@@ -216,8 +216,8 @@ bool Blacklist::remove_ip_subnets(IPSubnet *key) {
 }
 
 bool Blacklist::disable_blacklist() {
-    __u32 key = 0; // Key 0 là cho blacklist
-    __u8 value = 0; // 0 = disabled
+    uint32_t key = ConfigKey::BLACKLIST;
+    uint8_t value = 0; // 0 = disabled
     if (bpf_map_update_elem(map_fd_config_state, &key, &value, BPF_ANY) != 0) {
         std::cerr << "Failed to disable blacklist: " << strerror(errno) << std::endl;
         return false;
@@ -227,8 +227,8 @@ bool Blacklist::disable_blacklist() {
 }
 
 bool Blacklist::enable_blacklist() {
-    __u32 key = 0; // Key 0 là cho blacklist
-    __u8 value = 1; // 1 = enabled
+    uint32_t key = ConfigKey::BLACKLIST;
+    uint8_t value = 1; // 1 = enabled
     if (bpf_map_update_elem(map_fd_config_state, &key, &value, BPF_ANY) != 0) {
         std::cerr << "Failed to enable blacklist: " << strerror(errno) << std::endl;
         return false;

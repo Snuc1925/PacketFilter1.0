@@ -174,7 +174,7 @@ bool Whitelist::remove_ip_subnets(IPSubnet *key) {
 }
 
 bool Whitelist::disable_whitelist() {
-    uint32_t key = 2; // Key 2 is for whitelist
+    uint32_t key = ConfigKey::WHITELIST;
     uint8_t value = 0; // 0 = disabled
     if (bpf_map_update_elem(map_fd_config_state, &key, &value, BPF_ANY) != 0) {
         std::cerr << "Failed to disable whitelist: " << strerror(errno) << std::endl;
@@ -185,7 +185,7 @@ bool Whitelist::disable_whitelist() {
 }
 
 bool Whitelist::enable_whitelist() {
-    uint32_t key = 2; // Key 2 is for whitelist
+    uint32_t key = ConfigKey::WHITELIST;
     uint8_t value = 1; // 1 = enabled
     if (bpf_map_update_elem(map_fd_config_state, &key, &value, BPF_ANY) != 0) {
         std::cerr << "Failed to enable whitelist: " << strerror(errno) << std::endl;
